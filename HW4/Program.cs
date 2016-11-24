@@ -48,6 +48,10 @@ namespace HW4
         static int[] InitArray(int sizeArr)
         {
             int[] array = new int[sizeArr];
+            for(int i = 0; i < sizeArr; i++)
+            {
+                array[i] = - 1;
+            }
             return array;
         }
         // method that read user input, validate it , and put in array
@@ -56,7 +60,7 @@ namespace HW4
             string input;
             int i = 0;
             int elem = 0;
-            Random rnd = new Random();
+            //Random rnd = new Random();
 
             while (i < sizeIn)
             {
@@ -196,7 +200,8 @@ namespace HW4
                 Console.Write("Please write the stack size: ");
             }
             int[] arrayA = InitArray(sizeIn); // initialize array
-            string str = "";
+            string str = ""; // for input from console
+            int count = 0; // size of stack
             while (str != "q")
             {
                 Console.WriteLine("Please select one of the following option: 1=push, 2=pop, q=quit");
@@ -206,23 +211,11 @@ namespace HW4
                 {
                     case "1":
                     case "push":
-                        string cons_output = "";
-                        if (stack_push(arrayA, sizeIn, ref top))
+                        // return true if stack is still not full, otherwise return false
+                        if (stack_push(arrayA, sizeIn, ref top, ref count))
                         {
                             Console.Write("Your stack is: ");
-                            foreach (var item in arrayA)
-                            {
-                                if (item == -1)
-                                {
-                                    cons_output = "-";
-                                }
-                                else
-                                {
-                                    cons_output = item.ToString();
-                                }
-                                Console.Write(cons_output + " ");
-                            }
-                            Console.Write("\n");
+                            print_stack(arrayA, sizeIn, count);// print the stack current status
                         }
                         else
                         {
@@ -232,23 +225,11 @@ namespace HW4
                     case "2":
                     case "pull":
                         int val;
-                        //string cons_output = "";
-                        if (stack_pull(arrayA, sizeIn, ref top, out val))
+                        // return true if stack is still not empty, otherwise return false
+                        if (stack_pull(arrayA, sizeIn, ref top, out val, ref count))
                         {
                             Console.Write("Your stack is: ");
-                            foreach (var item in arrayA)
-                            {
-                                if( item == -1)
-                                {
-                                    cons_output = "-";
-                                }
-                                else
-                                {
-                                    cons_output = item.ToString();
-                                }
-                                Console.Write(cons_output + " ");
-                            }
-                            Console.Write("\n");
+                            print_stack(arrayA, sizeIn, count); // print the stack current status
                             Console.WriteLine("The value pulled from top is: " + val);
                         }
                         else
@@ -265,32 +246,34 @@ namespace HW4
                 }
             }
         }
-        static bool stack_push(int[] arrayIn, int sizeIn,ref int topIn)
+        static bool stack_push(int[] arrayIn, int sizeIn,ref int topIn, ref int count)
         {
             int val1 = 0;
             Console.Write("Please enter the value to push: ");
-            while (!(int.TryParse(Console.ReadLine(), out val1)))
+            while (!(int.TryParse(Console.ReadLine(), out val1))) // validate the input from console
             {
                 Console.Write("Wrong value. Please enter the value to push: ");
             }
-            if ((topIn < sizeIn) && topIn >= 0)
+            if ((topIn < sizeIn) && topIn >= 0) // push if stack is not full
             {
-                arrayIn[topIn] = val1;
-                topIn++;
+                arrayIn[topIn] = val1; // push one element
+                topIn++; // move cursor to the top of the stack
+                count++; // increase the size of stack
                 return true;
             }
-            return false;
+            return false; // if stack full then return false
         }
-        static bool stack_pull(int[] arrayIn, int sizeIn, ref int topIn, out int val1)
+        static bool stack_pull(int[] arrayIn, int sizeIn, ref int topIn, out int val1, ref int count)
         {
-            if ((topIn <= sizeIn) && topIn > 0)
+            if ((topIn <= sizeIn) && topIn > 0) // check if stack is not empty already
             {
-                val1 = arrayIn[topIn-1];
-                arrayIn[topIn - 1] = -1;
-                topIn--;
+                val1 = arrayIn[topIn-1];  // save value from the top and pass it out from the method 
+                arrayIn[topIn - 1] = -1; // delete value 
+                topIn--; // move top one step back
+                count--;  // increase the size of the stack
                 return true;
             }
-            else if (topIn == 0 || sizeIn==0)
+            else if (topIn == 0 || sizeIn==0) // stack is empty
             {
                 val1 = -1;
                 return false;
@@ -298,11 +281,11 @@ namespace HW4
             val1 = -1;
             return false;
         }
-        static void circular_buffer()
+        static void circular_buffer() // ring buffer method
         {
-            int sizeIn = 0;
-            int tail = 0;
-            int head = 0;
+            int sizeIn = 0; // size of the array datastructure
+            int tail = 0; // tail points to the first element to read/delete from the buffer
+            int head = 0; // head points to the last element to write to the buffer
             Console.Write("Please write the circular buffer size: ");
             // read the size of array from user input
             while (!(int.TryParse(Console.ReadLine(), out sizeIn)))
@@ -311,25 +294,25 @@ namespace HW4
             }
             int[] arrayA = InitArray(sizeIn); // initialize array
             string str = "";
-            int counter = 0;
+            int counter = 0; // the actual size of the buffer
             while (str != "q")
             {
                 Console.WriteLine("\nPlease select one of the following option: 1=enqueue, 2=queue q=quit");
-                str = Console.ReadLine();
+                str = Console.ReadLine();  // read user input from the console
                 switch (str)
                 {
                     case "1":
-                    case "enqueue":
+                    case "enqueue": // write new element to the buffer from the head
                         enqueueC_1(arrayA, sizeIn, ref tail, ref head, ref counter);
                         print_buf(arrayA, sizeIn, tail, head, counter);
                         break;
                     case "2":
-                    case "queue":
+                    case "queue": // delete first element from the buffer from the tail
                         queueC_1(arrayA, sizeIn, ref tail, ref head, ref counter);
                         print_buf(arrayA, sizeIn, tail, head, counter);
                         break;
                     case "q":
-                    case "quite":
+                    case "quit":
                         break;
                     default:
                         Console.Write("Invalid selection. ");
@@ -337,29 +320,30 @@ namespace HW4
                 }
             }    
         }
+        // write new element to the buffer from the head
         static void enqueueC_1(int[] arrayIn, int sizeIn, ref int tail, ref int head, ref int counter)
         {
             string input;
             int elem = 0;
-
+            // read the new value to be inserted
             Console.Write("Please enter the value to enqueue (add new from head): ");
             input = Console.ReadLine();
             if (int.TryParse(input, out elem))
             {
-                if (counter < sizeIn )
+                if (counter < sizeIn )  // check if the buffer is not full yet
                 {
-                    if (head < sizeIn)
+                    if (head < sizeIn)  // check if head index is less than the array size
                     {
-                        arrayIn[head] = elem;
-                        head++;
-                        counter++;
+                        arrayIn[head] = elem; // adding new element
+                        head++; // move "writing" index one ste forward
+                        counter++; // increase the size of buffer
                     }
-                    else // if (head == sizeIn)
+                    else // if (head == sizeIn) , if head index reached the end of array
                     {
-                        head = 0;
-                        arrayIn[head] = elem;
-                        counter++;
-                        head++;
+                        head = 0; // move the head "write index" to the beginning of the array
+                        arrayIn[head] = elem; // add new element to the beginning of the array
+                        counter++;// increase the size of buffer
+                        head++; // move the head index to the 2nd cell of array, after the first one was already written
                     }
                 }
                 else
@@ -372,22 +356,23 @@ namespace HW4
                 Console.WriteLine("Wrong input. Enter the buffer element again: ");
             }
         }
+        // delete/read element from the buffer at the taill index
         static void queueC_1(int[] arrayIn, int sizeIn, ref int tail, ref int head, ref int counter)
         {
-            if (counter <= sizeIn && counter > 0)
+            if (counter <= sizeIn && counter > 0) // if the buffer in not empty
             {
-                if (tail < sizeIn)
+                if (tail < sizeIn) // if the tail is less than the size of array
                 {
-                    arrayIn[tail] = -1;
-                    tail++;
-                    counter--;
+                    arrayIn[tail] = -1; // remove element at the tail index (first index in the ring buffer)
+                    tail++; // move tail step forward
+                    counter--; // reduce the size of the buffer
                 }
                 else // if (tail == sizeIn)
                 {
-                    tail = 0;
-                    arrayIn[tail] = -1;
-                    counter--;
-                    tail++;
+                    tail = 0; // if last removewas at the end of the array , then set tail to the beginning of the array
+                    arrayIn[tail] = -1; // remove element under tail index
+                    counter--; // reduce the size of buffer
+                    tail++; // move tail one step forward
                 }
             }
             else
@@ -395,52 +380,73 @@ namespace HW4
                 Console.WriteLine("The buffer is empty.");
             }
         }
+        // prints ring buffer
         static void print_buf(int[] arrayIn, int sizeIn, int tail, int head, int counterInner)
         {
             int i = tail;
-            if(counterInner == 0)
+            if(counterInner == 0) // if buffer is empty print [ ]
             {
                 Console.Write("[ ]");
             }
             while (counterInner > 0)
             {
-                if (i < sizeIn)
+                if (i < sizeIn) // if printed element is less than the maximum of the array
                 {
                     if (tail == i)
                     {
-                        Console.Write("[ " + arrayIn[i]);
+                        Console.Write("[ " + arrayIn[i]); // print the first element sof the buffer
                         i++;
-                        counterInner--;
                     }
                     else if (tail != i)
                     {
-                        Console.Write(", " + arrayIn[i]);
+                        Console.Write(", " + arrayIn[i]); // middle element
                         i++;
-                        counterInner--;
                     }
                 }
-                else if (i >= sizeIn)
+                else if (i >= sizeIn) // if index exceed the size of the array
                 {
                     i = 0;
-                    if (tail == sizeIn)
+                    if (tail == sizeIn) // print start position of the buffer
                     {
                         Console.Write("[ " + arrayIn[i]);
                         i++;
-                        counterInner--;
                     }
-                    else
+                    else // print the middle elements of the buffer
                     {
                         Console.Write(", " + arrayIn[i]);
                         i++;
-                        counterInner--;
                     }
                 }
-                // counterInner--;
+                counterInner--; // reduce the size of printed array
                 if (counterInner == 0)
                 {
                     Console.Write(" ]");
                 }
             }
+        }
+        // print the stack 
+        static void print_stack(int[] arrayIn, int sizeIn, int counterInner)
+        {
+            int i = 0;
+            if (counterInner == 0)
+            {
+                Console.Write("[ "); // beginning of the stack which is the same as 1st element in the array
+            }
+            while (counterInner > 0)
+            {
+                if (i == 0)
+                {
+                    Console.Write("[ " + arrayIn[i]); // print start of the stack
+                    i++;
+                }
+                else
+                {
+                    Console.Write(", " + arrayIn[i]); // print middle of the stack
+                    i++;
+                }
+                counterInner--; // reduce the size of the printed elements
+            }
+            Console.WriteLine(" ]"); // print the last element of the stack
         }
     }
 }

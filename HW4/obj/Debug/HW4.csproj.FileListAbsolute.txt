@@ -4,3 +4,4 @@ C:\Users\drleavsy\documents\visual studio 2015\Projects\HW4\HW4\bin\Debug\HW4.pd
 C:\Users\drleavsy\documents\visual studio 2015\Projects\HW4\HW4\bin\Debug\InputSimulator.dll
 C:\Users\drleavsy\documents\visual studio 2015\Projects\HW4\HW4\obj\Debug\HW4.exe
 C:\Users\drleavsy\documents\visual studio 2015\Projects\HW4\HW4\obj\Debug\HW4.pdb
+C:\Users\drleavsy\documents\visual studio 2015\Projects\HW4\HW4\obj\Debug\HW4.csprojResolveAssemblyReference.cache
